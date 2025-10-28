@@ -1,0 +1,95 @@
+#include <iostream>
+using namespace std;
+
+struct Node {
+    string title;
+    Node* next;
+};
+
+Node* createNode(string title) {
+    Node* newNode = new Node();
+    newNode->title = title;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertEnd(Node*& head, string title) {
+    Node* newNode = createNode(title);
+    if (head == NULL) {
+        head = newNode;
+        return;
+    }
+    Node* temp = head;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+}
+
+void insertAtPos(Node*& head, string title, int pos) {
+    Node* newNode = createNode(title);
+    if (pos == 0) {
+        newNode->next = head;
+        head = newNode;
+        return;
+    }
+    Node* temp = head;
+    for (int i = 0; temp != NULL && i < pos - 1; i++)
+        temp = temp->next;
+
+    if (temp == NULL) return;
+
+    newNode->next = temp->next;
+    temp->next = newNode;
+}
+
+void removeAtPos(Node*& head, int pos) {
+    if (head == NULL) return;
+    Node* temp = head;
+
+    if (pos == 0) {
+        head = head->next;
+        delete temp;
+        return;
+    }
+
+    for (int i = 0; temp != NULL && i < pos - 1; i++)
+        temp = temp->next;
+
+    if (temp == NULL || temp->next == NULL) return;
+
+    Node* next = temp->next->next;
+    delete temp->next;
+    temp->next = next;
+}
+
+void displayList(Node* head) {
+    cout << "Borrowed Books: ";
+    Node* temp = head;
+    while (temp != NULL) {
+        cout << temp->title;
+        if (temp->next != NULL) cout << " -> ";
+        temp = temp->next;
+    }
+    cout << " -> NULL" << endl;
+}
+
+int main() {
+    Node* head = NULL;
+
+    insertEnd(head, "Harry Potter");
+    insertEnd(head, "The Hobbit");
+    insertEnd(head, "Narnia");
+
+    cout << "Initial Borrowed List:\n";
+    displayList(head);
+
+    insertAtPos(head, "Percy Jackson", 1);
+    cout << "\nAfter inserting new book:\n";
+    displayList(head);
+
+    removeAtPos(head, 2);
+    cout << "\nAfter removing one book:\n";
+    displayList(head);
+
+    return 0;
+}
